@@ -29,7 +29,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       let dbUser = existingUsers[0]
 
       if (!dbUser) {
-        const isOwner = profile.email === env.OWNER_EMAIL
+        const allUsers = await db.select({ id: users.id }).from(users).limit(1)
+        const isOwner = allUsers.length === 0 || profile.email === env.OWNER_EMAIL
         const [newUser] = await db.insert(users).values({
           googleSub: profile.sub,
           email: profile.email,
